@@ -13,7 +13,7 @@ def episode_lengths_q_learning(epsilon=0.1, num_episodes=1000, n=50):
     Q = np.zeros((env.nS, env.nA))
     policy = EpsilonGreedyPolicy(Q, epsilon=epsilon)
 
-    _, (episode_lengths, _) = double_q_learning(env, policy, Q, num_episodes)
+    _, (episode_lengths, _) = q_learning(env, policy, Q, num_episodes)
     plt.plot(running_mean(episode_lengths, n))
     plt.title("Episode lengths Q-learning")
     plt.show()
