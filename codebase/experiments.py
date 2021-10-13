@@ -27,8 +27,8 @@ def episode_lengths_q_learning_stochastic(epsilon=0.1, num_episodes=1000, n=50):
     plt.show()
 
 
-def episode_lengths_double_q_learning_stochastic(epsilon=0.1, num_episodes=1000, n=50):
-    env = GridworldStochasticEnv()
+def episode_lengths_double_q_learning_deterministic(epsilon=0.1, num_episodes=1000, n=50):
+    env = GridworldEnv()
     Qt, Qb = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
     policy = EpsilonGreedyPolicy(Qt + Qb, epsilon=epsilon)
 
@@ -38,8 +38,8 @@ def episode_lengths_double_q_learning_stochastic(epsilon=0.1, num_episodes=1000,
     plt.show()
 
 
-def episode_lengths_double_q_learning_deterministic(epsilon=0.1, num_episodes=1000, n=50):
-    env = GridworldEnv()
+def episode_lengths_double_q_learning_stochastic(epsilon=0.1, num_episodes=1000, n=50):
+    env = GridworldStochasticEnv()
     Qt, Qb = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
     policy = EpsilonGreedyPolicy(Qt + Qb, epsilon=epsilon)
 
