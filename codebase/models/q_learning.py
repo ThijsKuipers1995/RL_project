@@ -17,7 +17,7 @@ def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=0.5):
     return Q, tuple(zip(*stats))
 
 
-def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, alpha=0.5, random_Q_choice=False, eps=0.5, update_Q_fn=lambda Qt, Qb: Qt + Qb):
+def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, alpha=0.5, random_Q_choice=True, eps=0.5, update_Q_fn=lambda Qt, Qb: Qt + Qb):
     stats = []
 
     # choose randomly based on eps or switch every iteration
@@ -38,4 +38,4 @@ def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, al
             policy.set_Q(update_Q_fn(Qt, Qb))
             i, R = i + 1, R + reward
         stats.append((i, R))
-    return tuple(Qt, Qb), tuple(zip(*stats))
+    return (Qt, Qb), tuple(zip(*stats))
