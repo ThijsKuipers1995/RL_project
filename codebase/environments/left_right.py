@@ -48,10 +48,10 @@ class LeftRightEnv(gym.Env):
     """
 
     def __init__(self, 
-                 reward_right: float, 
-                 reward_left: float,
-                 mu: float,
-                 sigma: float):
+                 reward_right: float = 0, 
+                 reward_left: float = 0,
+                 mu: float = -0.1,
+                 sigma: float = 1):
         
         super(LeftRightEnv, self).__init__()
         
