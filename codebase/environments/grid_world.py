@@ -1,14 +1,14 @@
 import gym
 import numpy as np
 import sys
-import stochasticEnv
+from .stochasticEnv import stochasticEnv
 
 UP = 0
 RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-class GridworldEnv(stochasticEnv.stochasticEnv):
+class GridworldEnv(stochasticEnv):
     def _limit_coordinates(self, coord):
         coord[0] = min(coord[0], self.shape[0] - 1)
         coord[0] = max(coord[0], 0)
