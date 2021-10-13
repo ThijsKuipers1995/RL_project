@@ -8,7 +8,7 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-class GridworldEnv(stochasticEnv.stochasticEnv):
+class GridworldEnvStochastic(stochasticEnv.stochasticEnv):
     """
     Grid World environment from Sutton's Reinforcement Learning book chapter 4.
     You are an agent on an MxN grid and your goal is to reach the terminal
