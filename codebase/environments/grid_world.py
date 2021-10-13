@@ -8,6 +8,10 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
+SHAPE = (4,4)
+MU = -0.2
+SIGMA = 1
+
 class GridworldEnv(stochasticEnv):
     def _limit_coordinates(self, coord):
         coord[0] = min(coord[0], self.shape[0] - 1)
@@ -20,11 +24,11 @@ class GridworldEnv(stochasticEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
-        is_done = tuple(new_position) == (6, 9)
+        is_done = tuple(new_position) == (SHAPE[0]-1, SHAPE[1]-1)
         return [(1.0, new_state, lambda: -1.0, is_done)]
 
     def __init__(self):
-        self.shape = (7, 10)
+        self.shape = SHAPE
 
         nS = np.prod(self.shape)
         nA = 4
@@ -50,5 +54,5 @@ class GridworldStochasticEnv(GridworldEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
-        is_done = tuple(new_position) == (6, 9)
-        return [(1.0, new_state, lambda: rng.normal(-0.2, 1), is_done)]
+        is_done = tuple(new_position) == (SHAPE[0]-1, SHAPE[1]-1)
+        return [(1.0, new_state, lambda: rng.normal(MU, SIGMA), is_done)]
