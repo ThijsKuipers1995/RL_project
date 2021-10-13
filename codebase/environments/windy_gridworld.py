@@ -52,31 +52,3 @@ class WindyGridworldEnv(discrete.DiscreteEnv):
         isd[np.ravel_multi_index((3,0), self.shape)] = 1.0
 
         super(WindyGridworldEnv, self).__init__(nS, nA, P, isd)
-
-    def render(self, mode='human', close=False):
-        self._render(mode, close)
-
-    def _render(self, mode='human', close=False):
-        if close:
-            return
-
-        outfile = StringIO() if mode == 'ansi' else sys.stdout
-
-        for s in range(self.nS):
-            position = np.unravel_index(s, self.shape)
-            # print(self.s)
-            if self.s == s:
-                output = " x "
-            elif position == (3,7):
-                output = " T "
-            else:
-                output = " o "
-
-            if position[1] == 0:
-                output = output.lstrip()
-            if position[1] == self.shape[1] - 1:
-                output = output.rstrip()
-                output += "\n"
-
-            outfile.write(output)
-        outfile.write("\n")

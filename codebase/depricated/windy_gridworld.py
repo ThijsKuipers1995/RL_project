@@ -3,12 +3,15 @@ import numpy as np
 import sys
 from gym.envs.toy_text import discrete
 
+
 UP = 0
 RIGHT = 1
 DOWN = 2
 LEFT = 3
 
+
 rng = np.random.default_rng()
+
 
 class stochasticEnv(discrete.DiscreteEnv):
     def step(self, a):
@@ -18,6 +21,7 @@ class stochasticEnv(discrete.DiscreteEnv):
         self.s = s
         self.lastaction = a
         return (int(s), r(), d, {"prob": p})
+
 
 class WindyGridworldEnv(stochasticEnv):
 
@@ -35,6 +39,8 @@ class WindyGridworldEnv(stochasticEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (3, 7)
+
+        # RETURNED REWARD SHOULD BE CALLABLE
         return [(1.0, new_state, lambda:-1.0, is_done)]
 
     def __init__(self):
@@ -63,31 +69,3 @@ class WindyGridworldEnv(stochasticEnv):
         isd[np.ravel_multi_index((3,0), self.shape)] = 1.0
 
         super(WindyGridworldEnv, self).__init__(nS, nA, P, isd)
-
-    def render(self, mode='human', close=False):
-        self._render(mode, close)
-
-    def _render(self, mode='human', close=False):
-        if close:
-            return
-
-        outfile = StringIO() if mode == 'ansi' else sys.stdout
-
-        for s in range(self.nS):
-            position = np.unravel_index(s, self.shape)
-            # print(self.s)
-            if self.s == s:
-                output = " x "
-            elif position == (3,7):
-                output = " T "
-            else:
-                output = " o "
-
-            if position[1] == 0:
-                output = output.lstrip()
-            if position[1] == self.shape[1] - 1:
-                output = output.rstrip()
-                output += "\n"
-
-            outfile.write(output)
-        outfile.write("\n")
