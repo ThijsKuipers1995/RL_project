@@ -1,3 +1,4 @@
+import numpy as np
 from gym.envs.toy_text import discrete
 
 rng = np.random.default_rng()

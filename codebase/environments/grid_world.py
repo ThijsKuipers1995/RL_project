@@ -1,14 +1,14 @@
 import gym
 import numpy as np
 import sys
-import stochasticEnv
+from .stochasticEnv import stochasticEnv
 
 UP = 0
 RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-class GridworldEnv(stochasticEnv.stochasticEnv):
+class GridworldEnv(stochasticEnv):
     """
     Grid World environment from Sutton's Reinforcement Learning book chapter 4.
     You are an agent on an MxN grid and your goal is to reach the terminal
@@ -53,7 +53,7 @@ class GridworldEnv(stochasticEnv.stochasticEnv):
             P[s] = {a : [] for a in range(nA)}
 
             is_done = lambda s: s == 0 or s == (nS - 1)
-            reward = lambda:0.0 if is_done(s) else lambda:-1.0
+            reward = lambda: 0.0 if is_done(s) else lambda: -1.0
 
             # We're stuck in a terminal state
             if is_done(s):
