@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 import sys
-from .stochasticEnv import stochasticEnv
+from .stochasticEnv import stochasticEnv, rng
 
 UP = 0
 RIGHT = 1
@@ -44,3 +44,11 @@ class GridworldEnv(stochasticEnv):
         isd[np.ravel_multi_index((0,0), self.shape)] = 1.0
 
         super(GridworldEnv, self).__init__(nS, nA, P, isd)
+
+class GridworldStochasticEnv(GridworldEnv):
+    def _calculate_transition_prob(self, current, delta):
+        new_position = np.array(current) + np.array(delta)
+        new_position = self._limit_coordinates(new_position).astype(int)
+        new_state = np.ravel_multi_index(tuple(new_position), self.shape)
+        is_done = tuple(new_position) == (6, 9)
+        return [(1.0, new_state, lambda: rng.normal(-0.2, 1), is_done)]
