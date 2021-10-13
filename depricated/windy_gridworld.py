@@ -8,7 +8,18 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-class WindyGridworldEnv(discrete.DiscreteEnv):
+rng = np.random.default_rng()
+
+class stochasticEnv(discrete.DiscreteEnv):
+    def step(self, a):
+        transitions = self.P[self.s][a]
+        i = rng.choice(len(transitions), 1, p=[t[0] for t in transitions])[0]
+        p, s, r, d = transitions[i]
+        self.s = s
+        self.lastaction = a
+        return (int(s), r(), d, {"prob": p})
+
+class WindyGridworldEnv(stochasticEnv):
 
     metadata = {'render.modes': ['human', 'ansi']}
 
@@ -24,7 +35,7 @@ class WindyGridworldEnv(discrete.DiscreteEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (3, 7)
-        return [(1.0, new_state, -1.0, is_done)]
+        return [(1.0, new_state, lambda:-1.0, is_done)]
 
     def __init__(self):
         self.shape = (7, 10)
