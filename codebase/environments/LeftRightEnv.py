@@ -4,12 +4,10 @@ from gym.utils import seeding
 import numpy as np
 from typing import List, Tuple
 
-
 LEFT = 0
 RIGHT = 1
 
-
-class LeftRight(gym.Env):
+class LeftRightEnv(gym.Env):
     """
     Source:
         This environment corresponds to the simple Markov Decision Process
@@ -55,7 +53,7 @@ class LeftRight(gym.Env):
                  mu: float,
                  sigma: float):
         
-        super(LeftRight, self).__init__()
+        super(LeftRightEnv, self).__init__()
         
         self.reward_right = reward_right 
         self.reward_left = reward_left
