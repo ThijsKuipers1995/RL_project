@@ -8,9 +8,9 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-SHAPE = (4,4)
-MU = -0.2
-SIGMA = 1
+SHAPE = (4,7)
+MU = -1
+SIGMA = 2
 
 class GridworldEnv(stochasticEnv):
     def _limit_coordinates(self, coord):
