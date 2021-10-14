@@ -63,11 +63,11 @@ class LeftRightEnv(gym.Env):
         self.seed()
         self.state = None
         
-        self.nS = 2
-        self.nA = 2
+        self.nS = 4
+        self.nA = 10
         
         # Action space (left or right)
-        self.action_space = spaces.Discrete(self.nA) 
+        self.action_space = spaces.Discrete(self.nA)
              
         # Observational space (state 0 or 1)
         self.observation_space = spaces.Discrete(self.nS)
@@ -81,19 +81,28 @@ class LeftRightEnv(gym.Env):
         if self.state:
             reward = np.random.normal(loc=self.mu, scale=self.sigma)
             done = True
+            self.state = 3
         # otherwise return deterministic reward for state 0 depending on action
         else:
             if action:
-                reward = self.reward_right
-                done = True
-            else:
                 reward = self.reward_left
                 done = False
+                self.state = 2
+
+            else:
+                reward = self.reward_right
+                done = True
                 self.state = 1
 
         info = {}
         
         return self.state, reward, done, info
+
+    def state_actions(self, state):
+        if state == 2:
+            return self.nA
+        else:
+            return 2
     
     def reset(self) -> int:
         self.state = 0 
