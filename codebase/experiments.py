@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from collections import defaultdict
 
 from .models import q_learning, double_q_learning, EpsilonGreedyPolicy
 from .environments import *
@@ -121,4 +122,36 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, nr_iters=1000, resu
     plt.plot(dbl_q_rewards, label='Double Q Learning')
     plt.legend()
     plt.show()
+
+
+def check_environment_rewards(mu=0.5, num_episodes=1000, n_left_action=10):
+    env = LeftRightEnv(mu=mu, n_left_actions=n_left_action)
+    env.reset()
+    
+    avg_rewards = defaultdict(int)
+    action_counts = defaultdict(int)
+
+    for _ in tqdm(range(num_episodes)):
+        env.step(1)
+        action = np.random.randint(0, n_left_action)
+        _, reward, *_ = env.step(action)
+        avg_rewards[action] += reward
+        action_counts[action] += 1
+    
+    print(f"average reward per action from env: {mu=}:")
+
+    for action in range(n_left_action):
+        avg_reward = avg_rewards[action] / action_counts[action]
+        observed = action_counts[action] / num_episodes
+        print(f"{action=}: {avg_reward=:.3f} ({observed=:.3f}))")
+
+
+
+
+
+    
+
+    
+
+
     

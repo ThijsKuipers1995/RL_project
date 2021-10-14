@@ -51,7 +51,8 @@ class LeftRightEnv(gym.Env):
                  reward_right: float = 0, 
                  reward_left: float = 0,
                  mu: float = -0.1,
-                 sigma: float = 1):
+                 sigma: float = 1,
+                 n_left_actions: int = 10):
         
         super(LeftRightEnv, self).__init__()
         
@@ -64,7 +65,7 @@ class LeftRightEnv(gym.Env):
         self.state = None
         
         self.nS = 4
-        self.nA = 10
+        self.nA = n_left_actions
         
         # Action space (left or right)
         self.action_space = spaces.Discrete(self.nA)
