@@ -5,9 +5,9 @@ from .models import q_learning, double_q_learning, EpsilonGreedyPolicy
 from .environments import *
 from .models.utils import running_mean
 
-SHAPE = (7,7)
+SHAPE = (7,10)
 result_target = True
-EPSILON = 0.9
+EPSILON = 0.5
 
 def episode_lengths_q_learning_determinstic(epsilon=EPSILON, num_episodes=1000, n=50, result_target=result_target):
     env = GridworldEnv()
@@ -34,7 +34,7 @@ def episode_lengths_q_learning_stochastic(epsilon=EPSILON, num_episodes=5000, n=
     cbar = plt.colorbar(ticks=[0,1,2,3])
     cbar.ax.set_yticklabels(['UP', 'RIGHT', 'DOWN', 'LEFT'])
     plt.show()
-    plt.plot(running_mean(episode_lengths, n))
+    plt.plot(running_mean(R, n))
     plt.title("Episode lengths Q-learning (stochastic)")
     plt.show()
 
@@ -49,7 +49,7 @@ def episode_lengths_double_q_learning_stochastic(epsilon=EPSILON, num_episodes=5
     cbar = plt.colorbar(ticks=[0,1,2,3])
     cbar.ax.set_yticklabels(['UP', 'RIGHT', 'DOWN', 'LEFT'])
     plt.show()
-    plt.plot(running_mean(episode_lengths, n))
+    plt.plot(running_mean(R, n))
     plt.title("Episode lengths double Q-learning (stochastic)")
     plt.show()
 
