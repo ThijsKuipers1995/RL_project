@@ -8,9 +8,10 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-SHAPE = (4,7)
-MU = -1
-SIGMA = 2
+SHAPE = (7,7)
+MU = -0.1
+SIGMA = 0.5
+N_PATHS = 10
 
 class GridworldEnv(stochasticEnv):
     def _limit_coordinates(self, coord):
@@ -38,10 +39,12 @@ class GridworldEnv(stochasticEnv):
         for s in range(nS):
             position = np.unravel_index(s, self.shape)
             P[s] = { a : [] for a in range(nA) }
-            P[s][UP] = self._calculate_transition_prob(position, [-1, 0])
-            P[s][RIGHT] = self._calculate_transition_prob(position, [0, 1])
-            P[s][DOWN] = self._calculate_transition_prob(position, [1, 0])
-            P[s][LEFT] = self._calculate_transition_prob(position, [0, -1])
+            for i in range(N_PATHS):
+                c = 4 * i
+                P[s][UP+c] = self._calculate_transition_prob(position, [-1, 0])
+                P[s][RIGHT+c] = self._calculate_transition_prob(position, [0, 1])
+                P[s][DOWN+c] = self._calculate_transition_prob(position, [1, 0])
+                P[s][LEFT+c] = self._calculate_transition_prob(position, [0, -1])
 
         # We always start in state (0, 0)
         isd = np.zeros(nS)
@@ -55,4 +58,4 @@ class GridworldStochasticEnv(GridworldEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (SHAPE[0]-1, SHAPE[1]-1)
-        return [(1.0, new_state, lambda: rng.normal(MU, SIGMA), is_done)]
+        return [(1., new_state, lambda: rng.normal(MU - new_position[0]/10, new_position[0])+SIGMA, is_done)]

@@ -11,7 +11,7 @@ def evaluate(env, target_policy, Q):
         i, R = i + 1, R + reward
     return i, R
 
-def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=0.05, result_target=True):
+def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=0.1, result_target=True):
     stats = []
     if result_target:
         target_policy = GreedyPolicy(Q)
@@ -32,7 +32,7 @@ def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=0.05, re
     return Q, tuple(zip(*stats))
 
 
-def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, alpha=0.05, random_Q_choice=True, eps=0.5, update_Q_fn=lambda Qt, Qb: Qt + Qb, result_target=True):
+def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, alpha=0.1, random_Q_choice=True, eps=0.5, update_Q_fn=lambda Qt, Qb: Qt + Qb, result_target=True):
     stats = []
     if result_target:
         target_policy = GreedyPolicy(update_Q_fn(Qt, Qb))
