@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from collections import defaultdict
 
-from .models import q_learning, double_q_learning, EpsilonGreedyPolicy, DynamicEpsilonGreedyPolicy
+from .models import q_learning, double_q_learning, EpsilonGreedyPolicy, DynamicEpsilonGreedyPolicy, SoftmaxPolicy
 from .environments import *
 from .models.utils import running_mean, tqdm
 
@@ -97,7 +97,7 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, nr_iters=1000, resu
     # Rs1, Rs2 = [], []
     for i in tqdm(range(nr_iters)):
         Q = np.zeros((env.nS, env.nA))
-        policy = EpsilonGreedyPolicy(Q, epsilon=epsilon)
+        policy = SoftmaxPolicy(Q)
         Q, (_, R, actions) = q_learning(env, policy, Q, num_episodes, verbatim=False, result_target=result_target)
         # print(np.sum(R)/np.count_nonzero(R),np.count_nonzero(R))
         q_rewards[i] = np.array(R)
@@ -105,7 +105,7 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, nr_iters=1000, resu
 
     for i in tqdm(range(nr_iters)):
         Qt, Qb = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
-        policy = EpsilonGreedyPolicy(Qt + Qb, epsilon=epsilon)
+        policy = SoftmaxPolicy(Qt + Qb)
         Q, (_, R, actions) = double_q_learning(env, policy, Qt, Qb, num_episodes, verbatim=False, result_target=result_target)
         # print(np.sum(R)/np.count_nonzero(R), np.count_nonzero(R))
         dbl_q_rewards[i] = np.array(R)
