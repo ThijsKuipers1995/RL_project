@@ -8,11 +8,6 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-SHAPE = (7,7)
-MU = -0.1
-SIGMA = 0.5
-N_PATHS = 10
-
 class GridworldEnv(stochasticEnv):
     def _limit_coordinates(self, coord):
         coord[0] = min(coord[0], self.shape[0] - 1)
@@ -25,11 +20,14 @@ class GridworldEnv(stochasticEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
-        is_done = tuple(new_position) == (SHAPE[0]-1, SHAPE[1]-1)
+        is_done = tuple(new_position) == (self.shape[0]-1, self.shape[1]-1)
         return [(1.0, new_state, lambda: -1.0, is_done)]
 
-    def __init__(self):
-        self.shape = SHAPE
+    def __init__(self, shape=(4,7), mu=-1, sigma=0.5, n_paths=4):
+        self.shape = shape
+        self.mu = mu
+        self.sigma = sigma
+        self.n_paths = n_paths
 
         nS = np.prod(self.shape)
         nA = 4
@@ -39,8 +37,8 @@ class GridworldEnv(stochasticEnv):
         for s in range(nS):
             position = np.unravel_index(s, self.shape)
             P[s] = { a : [] for a in range(nA) }
-            for i in range(N_PATHS):
-                c = 4 * i
+            for i in range(self.n_paths):
+                c = nA * i
                 P[s][UP+c] = self._calculate_transition_prob(position, [-1, 0])
                 P[s][RIGHT+c] = self._calculate_transition_prob(position, [0, 1])
                 P[s][DOWN+c] = self._calculate_transition_prob(position, [1, 0])
@@ -57,5 +55,5 @@ class GridworldStochasticEnv(GridworldEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
-        is_done = tuple(new_position) == (SHAPE[0]-1, SHAPE[1]-1)
-        return [(1., new_state, lambda: rng.normal(MU - new_position[0]/10, new_position[0])+SIGMA, is_done)]
+        is_done = tuple(new_position) == (self.shape[0]-1, self.shape[1]-1)
+        return [(1., new_state, lambda: rng.normal(self.mu - new_position[0]/10, new_position[0]+self.sigma), is_done)]
