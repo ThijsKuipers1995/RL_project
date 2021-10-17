@@ -90,34 +90,45 @@ def episode_lengths_double_q_learning_left_right(epsilon=0.1, num_episodes=200, 
     plt.show()
 
 
-def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, nr_iters=1000, result_target=True):
+def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, nr_iters=1000, result_target=True, policy='dynamic'):
     env = LeftRightEnv(mu=mu)
     q_actions, dbl_q_actions = np.zeros(shape=(nr_iters, num_episodes)), np.zeros(shape=(nr_iters, num_episodes))
     q_rewards, dbl_q_rewards = np.zeros(shape=(nr_iters, num_episodes)), np.zeros(shape=(nr_iters, num_episodes))
-    # Rs1, Rs2 = [], []
+    if policy=="dynamic":
+        args = {"epsilon": epsilon}
+        policy_cl = DynamicEpsilonGreedyPolicy
+    elif policy=="epsilon_greedy":
+        args = {"epsilon": epsilon}
+        policy_cl = EpsilonGreedyPolicy
+    elif policy=="softmax":
+        args = {}
+        policy_cl = SoftmaxPolicy
+    else:
+        raise AssertionError("Policy does not exist")
+
     for i in tqdm(range(nr_iters)):
         Q = np.zeros((env.nS, env.nA))
-        policy = SoftmaxPolicy(Q)
+        policy = policy_cl(Q, **args)
         Q, (_, R, actions) = q_learning(env, policy, Q, num_episodes, verbatim=False, result_target=result_target)
-        # print(np.sum(R)/np.count_nonzero(R),np.count_nonzero(R))
         q_rewards[i] = np.array(R)
         q_actions[i] = np.array([action[0] for action in actions])
 
     for i in tqdm(range(nr_iters)):
         Qt, Qb = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
-        policy = SoftmaxPolicy(Qt + Qb)
+        policy = policy_cl(Qt + Qb, **args)
         Q, (_, R, actions) = double_q_learning(env, policy, Qt, Qb, num_episodes, verbatim=False, result_target=result_target)
-        # print(np.sum(R)/np.count_nonzero(R), np.count_nonzero(R))
         dbl_q_rewards[i] = np.array(R)
         dbl_q_actions[i] = np.array([action[0] for action in actions])
 
 
     q_ratios, dbl_q_ratios = np.mean(q_actions, axis=0), np.mean(dbl_q_actions, axis=0)
+    plt.title("Ratio of left action being taken")
     plt.plot(q_ratios, label='Q Learning')
     plt.plot(dbl_q_ratios, label='Double Q Learning')
     plt.legend()
     plt.show()
     q_rewards, dbl_q_rewards = np.mean(q_rewards, axis=0), np.mean(dbl_q_rewards, axis=0)
+    plt.title("Rewards")
     plt.plot(q_rewards, label='Q Learning')
     plt.plot(dbl_q_rewards, label='Double Q Learning')
     plt.legend()
