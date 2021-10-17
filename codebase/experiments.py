@@ -92,7 +92,7 @@ def episode_lengths_double_q_learning_deterministic(epsilon=EPSILON, num_episode
 
 def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, num_iters=1000, result_target=True, policy_type='dynamic'):
     env = LeftRightEnv(mu=mu)
-    q_actions,  = np.zeros(shape=(num_iters, num_episodes))
+    q_actions = np.zeros(shape=(num_iters, num_episodes))
     dbl_q_actions = np.zeros(shape=(num_iters, num_episodes))
     q_rewards = np.zeros(shape=(num_iters, num_episodes))
     dbl_q_rewards = np.zeros(shape=(num_iters, num_episodes))
