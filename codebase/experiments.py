@@ -6,7 +6,7 @@ from .models import q_learning, double_q_learning, EpsilonGreedyPolicy, DynamicE
 from .environments import *
 from .models.utils import running_mean, tqdm
 
-SHAPE = (7,7)
+SHAPE = (4,7)
 result_target = True
 EPSILON = 1
 
@@ -162,10 +162,10 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
     else:
         raise AssertionError("Policy does not exist")
 
-    lengths_dbl_q = np.zeros(shape=(num_iters, num_episodes))
-    rewards_dbl_q = np.zeros(shape=(num_iters, num_episodes))
-    lengths_q = np.zeros(shape=(num_iters, num_episodes))
-    rewards_q = np.zeros(shape=(num_iters, num_episodes))
+    lengths_dbl_q = np.zeros(shape=(num_iters, num_episodes-10))
+    rewards_dbl_q = np.zeros(shape=(num_iters, num_episodes-10))
+    lengths_q = np.zeros(shape=(num_iters, num_episodes-10))
+    rewards_q = np.zeros(shape=(num_iters, num_episodes-10))
 
     for i in tqdm(range(num_iters)):
         Q = np.zeros((env.nS, env.nA))
@@ -173,8 +173,8 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
 
         Q, (episode_lengths, R, _) = q_learning(env, policy, Q, num_episodes, verbatim=False, result_target=result_target)
 
-        lengths_q[i] = episode_lengths
-        rewards_q[i] = R
+        lengths_q[i] = running_mean(episode_lengths, 10)
+        rewards_q[i] = running_mean(R, 10)
 
     for i in tqdm(range(num_iters)):
         Q1, Q2 = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
@@ -182,8 +182,8 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
 
         (Q1, Q2), (episode_lengths, R, _) = double_q_learning(env, policy, Q1, Q2, num_episodes, verbatim=False, result_target=result_target)
 
-        lengths_dbl_q[i] = episode_lengths
-        rewards_dbl_q[i] = R
+        lengths_dbl_q[i] = running_mean(episode_lengths, 10)
+        rewards_dbl_q[i] = running_mean(R, 10)
 
     avg_double_lengths, avg_double_rewards = np.mean(lengths_dbl_q, axis=0), np.mean(rewards_dbl_q, axis=0)
     double_length_std, double_reward_std = np.std(lengths_dbl_q, axis=0), np.std(rewards_dbl_q, axis=0)
@@ -193,17 +193,18 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
 
     plt.title("lengths")
     plt.plot(avg_q_lengths, label="Q Learning")
-    plt.fill_between(range(num_episodes), avg_q_lengths-q_length_std, avg_q_lengths+q_length_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_q_lengths-q_length_std, avg_q_lengths+q_length_std, alpha=0.5)
     plt.plot(avg_double_lengths, label="Double Q Learning")
-    plt.fill_between(range(num_episodes), avg_double_lengths-double_length_std, avg_double_lengths+double_length_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_double_lengths-double_length_std, avg_double_lengths+double_length_std, alpha=0.5)
+    plt.ylim(0,50)
     plt.legend()
     plt.show()
 
     plt.title("rewards")
     plt.plot(avg_q_rewards, label="Q Learning")
-    plt.fill_between(range(num_episodes), avg_q_rewards-q_reward_std, avg_q_rewards+q_reward_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_q_rewards-q_reward_std, avg_q_rewards+q_reward_std, alpha=0.5)
     plt.plot(avg_double_rewards, label="Double Q Learning")
-    plt.fill_between(range(num_episodes), avg_double_rewards-double_reward_std, avg_double_rewards+double_reward_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_double_rewards-double_reward_std, avg_double_rewards+double_reward_std, alpha=0.5)
     plt.legend()
     plt.show()
 

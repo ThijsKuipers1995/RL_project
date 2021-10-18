@@ -34,7 +34,7 @@ def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=1., resu
             i, R = i + 1, R + reward
 
         if result_target:
-            i, R, actions = evaluate(env, target_policy, Q)
+            _, R, actions = evaluate(env, target_policy, Q)
 
         stats.append((i, R, actions))
     return Q, tuple(zip(*stats))
@@ -69,7 +69,7 @@ def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, al
             i, R = i + 1, R + reward
 
         if result_target:
-            i, R, actions = evaluate(env, target_policy, update_Q_fn(Qt, Qb))
+            _, R, actions = evaluate(env, target_policy, update_Q_fn(Qt, Qb))
 
         stats.append((i, R, actions))
     return (Qt, Qb), tuple(zip(*stats))
