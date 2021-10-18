@@ -96,7 +96,7 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, num_iters=1000, res
     dbl_q_actions = np.zeros(shape=(num_iters, num_episodes))
     q_rewards = np.zeros(shape=(num_iters, num_episodes))
     dbl_q_rewards = np.zeros(shape=(num_iters, num_episodes))
-    
+
     if policy_type=="dynamic":
         args = {"epsilon": epsilon}
         policy_cl = DynamicEpsilonGreedyPolicy
@@ -112,7 +112,7 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, num_iters=1000, res
     for i in tqdm(range(num_iters)):
         Q = np.zeros((env.nS, env.nA))
         policy = policy_cl(Q, **args)
-        Q, (_, R, actions) = q_learning(env, policy, Q, num_episodes, 
+        Q, (_, R, actions) = q_learning(env, policy, Q, num_episodes,
                                     verbatim=False, result_target=result_target)
         q_rewards[i] = np.array(R)
         q_actions[i] = np.array([action[0] for action in actions])
@@ -120,7 +120,7 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, num_iters=1000, res
     for i in tqdm(range(num_iters)):
         Qt, Qb = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
         policy = policy_cl(Qt + Qb, **args)
-        Q, (_, R, actions) = double_q_learning(env, policy, Qt, Qb, num_episodes, 
+        Q, (_, R, actions) = double_q_learning(env, policy, Qt, Qb, num_episodes,
                                         verbatim=False, result_target=result_target)
         dbl_q_rewards[i] = np.array(R)
         dbl_q_actions[i] = np.array([action[0] for action in actions])
@@ -142,9 +142,9 @@ def ratio_left_right(epsilon=0.1, num_episodes=500, mu=-0.1, num_iters=1000, res
     plt.show()
 
 
-def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10, 
+def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
                     result_target=True, stochastic=False, policy_type="dynamic"):
-    
+
     if stochastic:
         env = GridworldStochasticEnv(shape=SHAPE)
     else:
@@ -168,16 +168,15 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
     rewards_q = np.zeros(shape=(num_iters, num_episodes))
 
     for i in tqdm(range(num_iters)):
-        train_fn = q_learning
         Q = np.zeros((env.nS, env.nA))
         policy = policy_cl(Q, **pol_args)
 
-        Q, (episode_lengths, R, _) = train_fn(env, policy, Q, num_episodes, verbatim=False, result_target=result_target)
+        Q, (episode_lengths, R, _) = q_learning(env, policy, Q, num_episodes, verbatim=False, result_target=result_target)
 
         lengths_q[i] = episode_lengths
         rewards_q[i] = R
 
-    for i in tqdm(range(num_iters)):        
+    for i in tqdm(range(num_iters)):
         Q1, Q2 = np.zeros((env.nS, env.nA)), np.zeros((env.nS, env.nA))
         policy = policy_cl(Q1 + Q2, **pol_args)
 

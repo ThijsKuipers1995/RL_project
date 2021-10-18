@@ -21,9 +21,9 @@ class GridworldEnv(stochasticEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (self.shape[0]-1, self.shape[1]-1)
-        return [(1.0, new_state, lambda: -1.0, is_done)]
+        return [(1.0, new_state, lambda: self.mu - new_position[0]/2, is_done)]
 
-    def __init__(self, shape=(4,7), mu=-1, sigma=0.5, n_paths=4):
+    def __init__(self, shape=(4,7), mu=-.5, sigma=0.5, n_paths=4):
         self.shape = shape
         self.mu = mu
         self.sigma = sigma
@@ -56,4 +56,4 @@ class GridworldStochasticEnv(GridworldEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (self.shape[0]-1, self.shape[1]-1)
-        return [(1., new_state, lambda: rng.normal(self.mu - new_position[0]/10, new_position[0]+self.sigma), is_done)]
+        return [(1., new_state, lambda: rng.normal(self.mu - new_position[0]/2, new_position[0]+self.sigma), is_done)]
