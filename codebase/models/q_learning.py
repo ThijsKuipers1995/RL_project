@@ -2,6 +2,7 @@ import numpy as np
 from .utils import tqdm
 from .policies import GreedyPolicy
 from collections import defaultdict
+from copy import deepcopy
 
 def evaluate(env, target_policy, Q):
     target_policy.set_Q(Q)
@@ -15,12 +16,15 @@ def evaluate(env, target_policy, Q):
         i, R = i + 1, R + reward
     return i, R, actions
 
-def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=1., result_target=True, verbatim=True):
+def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=1.0, 
+                result_target=True, all_Q=False, verbatim=True):
     visisted = defaultdict(int)
-
+    Qs = []
     stats = []
+
     if result_target:
         target_policy = GreedyPolicy(Q)
+    
 
     for _ in tqdm(range(num_episodes), disable=not verbatim):
         i = R = 0
@@ -35,16 +39,24 @@ def q_learning(env, policy, Q, num_episodes, discount_factor=1.0, alpha=1., resu
 
         if result_target:
             _, R, actions = evaluate(env, target_policy, Q)
+        if all_Q:
+            Qs.append(deepcopy(Q))
 
         stats.append((i, R, actions))
+    if all_Q:
+        Q = Qs
     return Q, tuple(zip(*stats))
 
 
-def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, alpha=1., random_Q_choice=True, eps=0.5, update_Q_fn=lambda Qt, Qb: Qt + Qb, result_target=True, verbatim=True):
+def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, 
+                        alpha=1., random_Q_choice=True, eps=0.5, 
+                        update_Q_fn=lambda Qt, Qb: Qt + Qb, result_target=True,
+                        all_Q=False, verbatim=True):
     visisted_t = defaultdict(int)
     visisted_b = defaultdict(int)
-
+    Qs = []
     stats = []
+
     if result_target:
         target_policy = GreedyPolicy(update_Q_fn(Qt, Qb))
     # choose randomly based on eps or switch every iteration
@@ -70,6 +82,10 @@ def double_q_learning(env, policy, Qt, Qb, num_episodes, discount_factor=1.0, al
 
         if result_target:
             _, R, actions = evaluate(env, target_policy, update_Q_fn(Qt, Qb))
+        if all_Q:
+            Qs.append((deepcopy(Qb), deepcopy(Qt)))
 
         stats.append((i, R, actions))
-    return (Qt, Qb), tuple(zip(*stats))
+
+    Q = Qs if all_Q else (Qt, Qb)
+    return Q, tuple(zip(*stats))
