@@ -202,28 +202,35 @@ def gridworld_test(num_iters=100, epsilon=1, num_episodes=500, n=10,
     avg_q_lengths, avg_q_rewards = np.mean(lengths_q, axis=0), np.mean(rewards_q, axis=0)
     q_length_std, q_reward_std = np.std(lengths_q, axis=0), np.std(rewards_q, axis=0)
 
-    plt.title("lengths")
+
     plt.plot(avg_q_lengths, label="Q Learning")
-    plt.fill_between(range(num_episodes-10), avg_q_lengths-q_length_std, avg_q_lengths+q_length_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_q_lengths-q_length_std, avg_q_lengths+q_length_std, alpha=0.3)
     plt.plot(avg_double_lengths, label="Double Q Learning")
-    plt.fill_between(range(num_episodes-10), avg_double_lengths-double_length_std, avg_double_lengths+double_length_std, alpha=0.5)
-    # plt.ylim(0,50)
+    plt.fill_between(range(num_episodes-10), avg_double_lengths-double_length_std, avg_double_lengths+double_length_std, alpha=0.3)
+    plt.ylim(0,60)
     plt.legend()
+    plt.ylabel("Episode Lengths")
+    plt.xlabel("Episode")
+    plt.xlim((0, num_episodes))
     plt.show()
 
-    plt.title("rewards")
     plt.plot(avg_q_rewards, label="Q Learning")
-    plt.fill_between(range(num_episodes-10), avg_q_rewards-q_reward_std, avg_q_rewards+q_reward_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_q_rewards-q_reward_std, avg_q_rewards+q_reward_std, alpha=0.3)
     plt.plot(avg_double_rewards, label="Double Q Learning")
-    plt.fill_between(range(num_episodes-10), avg_double_rewards-double_reward_std, avg_double_rewards+double_reward_std, alpha=0.5)
+    plt.fill_between(range(num_episodes-10), avg_double_rewards-double_reward_std, avg_double_rewards+double_reward_std, alpha=0.3)
     plt.legend()
+    plt.ylabel("Episode Reward")
+    plt.xlabel("Episode")
+    plt.xlim((0, num_episodes))
     plt.show()
 
 def run_gridworld(policy_type, double_Q=False, env_type="stochastic", num_iters=100, num_episodes=500, n=10):
     if env_type=="stochastic":
         env = GridworldStochasticEnv(shape=SHAPE)
-    else:
+    elif env_type == "deterministic":
         env = GridworldEnv(shape=SHAPE)
+    else:
+        raise AssertionError("Environment type does not exist")
 
     if policy_type=="dynamic":
         pol_args = {"epsilon": 1}
