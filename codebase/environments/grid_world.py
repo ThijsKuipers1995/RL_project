@@ -36,7 +36,7 @@ class GridworldEnv(stochasticEnv):
         P = {}
         for s in range(nS):
             position = np.unravel_index(s, self.shape)
-            P[s] = { a : [] for a in range(nA) }
+            P[s] = { a : [] for a in range(nA*n_paths) }
             for i in range(self.n_paths):
                 c = nA * i
                 P[s][UP+c] = self._calculate_transition_prob(position, [-1, 0])
@@ -45,10 +45,10 @@ class GridworldEnv(stochasticEnv):
                 P[s][LEFT+c] = self._calculate_transition_prob(position, [0, -1])
 
         # We always start in state (0, 0)
-        isd = np.zeros(nS)
+        isd = np.zeros(nS*n_paths)
         isd[np.ravel_multi_index((0,0), self.shape)] = 1.0
 
-        super(GridworldEnv, self).__init__(nS, nA, P, isd)
+        super(GridworldEnv, self).__init__(nS, nA * n_paths, P, isd)
 
 class GridworldStochasticEnv(GridworldEnv):
     def _calculate_transition_prob(self, current, delta):
@@ -56,5 +56,5 @@ class GridworldStochasticEnv(GridworldEnv):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         is_done = tuple(new_position) == (self.shape[0]-1, self.shape[1]-1)
-        # return [(1., new_state, lambda: rng.normal(self.mu - new_position[0], new_position[0]*3+self.sigma), is_done)]
-        return [(1., new_state, lambda: np.random.choice([self.mu - new_position[0] - 10, self.mu - new_position[0] + 10]), is_done)]
+        return [(1., new_state, lambda: rng.normal(self.mu - new_position[0]/10, new_position[0]*3+self.sigma), is_done)]
+        # return [(1., new_state, lambda: np.random.choice([self.mu - new_position[0] - 10*bool(new_position[0]), self.mu - new_position[0] + 10*bool(new_position[0])]), is_done)]
