@@ -1,7 +1,7 @@
 # RL_project: Comparison of Q-Learning and Double Q-Learning
 Het grote versterkende leren project
 
-For the plots see the results.ipynb notebook. 
+For the figures see the results.ipynb notebook. 
 
 # Requirements
 Python >= 3.8.5 with:
