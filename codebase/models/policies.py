@@ -80,7 +80,7 @@ class GreedyPolicy:
     A simple greedy policy.
     """
 
-    def __init__(self, Q, epsilon: float):
+    def __init__(self, Q):
         self._Q = Q
 
     def set_Q(self, Q: np.array):
